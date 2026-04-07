@@ -1,0 +1,17 @@
+JWKS handling: cache JWKS with TTL; on kid miss refresh once and retry.
+
+Expiry check: validate exp with small clock skew (e.g., 30s).
+
+jti validation: on refresh verify jti exists, not revoked, matches user, and not expired.
+
+Rotation: revoke old jti, create new jti, persist new record, set new cookie.
+
+Reuse detection: if jti missing or revoked, treat as compromise → revoke all sessions for user and force re-login.
+
+Cookie security: HttpOnly, Secure, SameSite=Lax or Strict as appropriate, max_age aligned with refresh expiry.
+
+CSRF mitigation: require POST for refresh, use SameSite and consider double‑submit CSRF token for extra safety.
+
+Rate limiting and logging: throttle refresh attempts and log IP, UA, timestamps; alert on suspicious patterns.
+
+Logout: clear cookie and mark jti revoked server‑side.
